@@ -73,6 +73,6 @@ contract SharedWallet {
 
     receive() external payable {
         balance += msg.value;
-        emit Transfer(msg.sender, address(this), amount);
+        emit Transfer(msg.sender, address(this), msg.value);
     }
 }
