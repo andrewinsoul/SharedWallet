@@ -71,6 +71,14 @@ contract SharedWallet {
         return balance;
     }
 
+    function getSharedWalletOwnerAddress() public view returns (address) {
+        return owner;
+    }
+
+    function getMyWalletAddress() public view returns (address) {
+        return msg.sender;
+    }
+
     receive() external payable {
         balance += msg.value;
         emit Transfer(msg.sender, address(this), msg.value);
