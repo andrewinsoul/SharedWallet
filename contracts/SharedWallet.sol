@@ -14,10 +14,12 @@ contract SharedWallet {
         owner = msg.sender;
     }
 
-    event DepositEvent(uint256 amount);
-    event AddBeneficiaryEvent(address beneficiary);
-    event RemoveBeneficiaryEvent(address beneficiary);
-    event WithdrawEvent(address beneficary, uint256 amount);
+    event AddBeneficiaryEvent(address indexed beneficiary, uint256 timestamp);
+    event RemoveBeneficiaryEvent(
+        address indexed beneficiary,
+        uint256 timestamp
+    );
+    event Transfer(address indexed _from, address indexed _to, uint256 amount);
 
     mapping(address => uint256) public beneficiaries;
 
@@ -48,7 +50,7 @@ contract SharedWallet {
         balance -= amount;
         beneficiaries[msg.sender] = block.timestamp;
         payable(msg.sender).transfer(amount);
-        emit WithdrawEvent(msg.sender, amount);
+        emit Transfer(address(this), msg.sender, amount);
     }
 
     function addBeneficiary(address beneficiaryAddress) public onlyOwner {
@@ -57,12 +59,12 @@ contract SharedWallet {
             "Beneficiary already exists"
         );
         beneficiaries[beneficiaryAddress] = 1;
-        emit AddBeneficiaryEvent(beneficiaryAddress);
+        emit AddBeneficiaryEvent(beneficiaryAddress, block.timestamp);
     }
 
     function removeBeneficiary(address beneficiaryAddress) public onlyOwner {
         beneficiaries[beneficiaryAddress] = 0;
-        emit RemoveBeneficiaryEvent(beneficiaryAddress);
+        emit RemoveBeneficiaryEvent(beneficiaryAddress, block.timestamp);
     }
 
     function getWalletBalance() public view returns (uint256) {
@@ -71,6 +73,6 @@ contract SharedWallet {
 
     receive() external payable {
         balance += msg.value;
-        emit DepositEvent(msg.value);
+        emit Transfer(msg.sender, address(this), amount);
     }
 }
