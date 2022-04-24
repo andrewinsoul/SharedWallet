@@ -79,7 +79,8 @@ contract SharedWallet {
         return msg.sender;
     }
 
-    receive() external payable {
+    function deposit() public payable {
+        require(msg.value != 0, "You need to deposit some amount of money!");
         balance += msg.value;
         emit Transfer(msg.sender, address(this), msg.value);
     }
