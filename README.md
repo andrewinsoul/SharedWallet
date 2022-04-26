@@ -8,3 +8,7 @@ This project was bootstrapped with Hardhat and the contract is deployed to Rinke
 - A beneficiary can only withdraw once in a day, that means if a beneficiary withdraws, he needs to wait for 24 hours before he can make another withdrawal
 - Owner of the wallet can either add or remove a beneficiary from the wallet
 - Only beneficiaries added by the owner of the wallet can make withdrawals
+
+# TEST
+
+All the features of the smart contract was tested. To run the test suite, run the command: `npm test`

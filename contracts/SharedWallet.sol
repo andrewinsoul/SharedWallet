@@ -34,7 +34,7 @@ contract SharedWallet {
     modifier checkWithdrawalPermission(uint256 amount) {
         require(
             beneficiaries[msg.sender] >= 1 || msg.sender == owner,
-            "You are not part of the beneficiaries, so you can't withdraw"
+            "You are not part of the beneficiaries, so you cannot withdraw"
         );
         require(balance >= amount, "There is not enough balance in the wallet");
         require(
