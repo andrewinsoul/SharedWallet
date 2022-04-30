@@ -4,10 +4,13 @@ This project was bootstrapped with Hardhat and the contract is deployed to Rinke
 
 # Features
 
-- Anybody can deposit token into the wallet
-- A beneficiary can only withdraw once in a day, that means if a beneficiary withdraws, he needs to wait for 24 hours before he can make another withdrawal
-- Owner of the wallet can either add or remove a beneficiary from the wallet
-- Only beneficiaries added by the owner of the wallet can make withdrawals
+- Only beneficiaries can withdraw from the wallet
+
+- Anybody can deposit token into the wallet. If you deposit to the wallet for your first time, you automatically become a beneficiary. It should be noted that 0.03 ETH is removed from your first deposit and this is the minimal to deposit for your first time.
+
+- A beneficiary can only withdraw once a month and must have a deposit of at least 0.5 ETH to withdraw
+
+- Only the owner of the shared wallet has access to the 0.03 ETH that is subtracted from every beneficiary the first time they deposit into the wallet
 
 # TEST
 
