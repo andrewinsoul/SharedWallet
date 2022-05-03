@@ -18,39 +18,42 @@ contract SharedWallet is Ownable {
         sharedWalletOwner = msg.sender;
     }
 
-    event AddBeneficiaryEvent(address indexed beneficiary, uint256 timestamp);
+    event AddBeneficiaryEvent(address indexed _beneficiary, uint256 _timestamp);
     event WithdrawTransferEvent(
         address indexed _from,
         address indexed _to,
-        uint256 amount
+        uint256 _amount
     );
     event WithdrawProfitTransferEvent(
         address indexed _from,
         address indexed _to,
-        uint256 amount
+        uint256 _amount
     );
     event DepositTransferEvent(
         address indexed _from,
         address indexed _to,
-        uint256 amount
+        uint256 _amount
     );
 
     mapping(address => uint256) public beneficiaries;
     mapping(address => bool) public beneficiariyStatus;
     mapping(address => uint256) public beneficiaryWithdrawalTimestamps;
 
-    modifier checkWithdrawalPermission(uint256 amount) {
+    modifier checkWithdrawalPermission(uint256 _amount) {
         require(
             beneficiariyStatus[msg.sender],
             "You are not part of the beneficiaries, so you cannot withdraw. To become a beneficiary, just deposit to the wallet"
         );
-        require(balance >= amount, "There is not enough balance in the wallet");
+        require(
+            balance >= _amount,
+            "There is not enough balance in the wallet"
+        );
         require(
             beneficiaries[msg.sender] >= 0.5 * 10**18,
             "You have not deposited enough, you need to have at least 0.5 ETH before you can withdraw"
         );
         require(
-            beneficiaries[msg.sender] - amount >= 0.03 * 10**18,
+            beneficiaries[msg.sender] - _amount >= 0.03 * 10**18,
             "You have exceeded your available limit for withdrawal (0.03 ETH is subtracted from your balance for maintenance of the shared wallet)"
         );
         require(
@@ -61,28 +64,31 @@ contract SharedWallet is Ownable {
         _;
     }
 
-    function withdraw(uint256 amount) public checkWithdrawalPermission(amount) {
-        balance -= amount;
-        beneficiaries[msg.sender] -= amount;
+    function withdraw(uint256 _amount)
+        public
+        checkWithdrawalPermission(_amount)
+    {
+        balance -= _amount;
+        beneficiaries[msg.sender] -= _amount;
         beneficiaryWithdrawalTimestamps[msg.sender] = block.timestamp;
-        payable(msg.sender).transfer(amount);
-        emit WithdrawTransferEvent(address(this), msg.sender, amount);
+        payable(msg.sender).transfer(_amount);
+        emit WithdrawTransferEvent(address(this), msg.sender, _amount);
     }
 
-    function withdrawMyProfit(uint256 amount) public onlyOwner {
+    function withdrawMyProfit(uint256 _amount) public onlyOwner {
         require(
-            sharedWalletProfit >= amount,
+            sharedWalletProfit >= _amount,
             "you cannot withdraw more than your profit"
         );
-        sharedWalletProfit -= amount;
-        payable(sharedWalletOwner).transfer(amount);
-        emit WithdrawProfitTransferEvent(address(this), msg.sender, amount);
+        sharedWalletProfit -= _amount;
+        payable(sharedWalletOwner).transfer(_amount);
+        emit WithdrawProfitTransferEvent(address(this), msg.sender, _amount);
     }
 
-    function addBeneficiary(uint256 initialDeposit) private {
+    function addBeneficiary(uint256 _initialDeposit) private {
         if (!beneficiariyStatus[msg.sender]) {
             require(
-                initialDeposit >= 0.03 * 10**18,
+                _initialDeposit >= 0.03 * 10**18,
                 "Your initial deposit must be at least 0.03 ETH"
             );
             beneficiariyStatus[msg.sender] = true;
